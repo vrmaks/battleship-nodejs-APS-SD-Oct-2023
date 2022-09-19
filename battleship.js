@@ -1,13 +1,19 @@
+const { Worker, isMainThread } = require('worker_threads');
 const readline = require('readline-sync');
 const gameController = require("./GameController/gameController.js");
 const cliColor = require('cli-color');
 const beep = require('beepbeep');
 const position = require("./GameController/position.js");
 const letters = require("./GameController/letters.js");
+let telemetryWorker;
 
 class Battleship {
-
     start() {
+        telemetryWorker = new Worker("./TelemetryClient/telemetryClient.js");   
+
+        console.log("Starting...");
+        telemetryWorker.postMessage({eventName: 'ApplicationStarted', properties:  {Technology: 'Node.js'}});
+
         console.log(cliColor.magenta("                                     |__"));
         console.log(cliColor.magenta("                                     |\\/"));
         console.log(cliColor.magenta("                                     ---"));
@@ -46,6 +52,9 @@ class Battleship {
             console.log("Enter coordinates for your shot :");
             var position = Battleship.ParsePosition(readline.question());
             var isHit = gameController.CheckIsHit(this.enemyFleet, position);
+
+            telemetryWorker.postMessage({eventName: 'Player_ShootPosition', properties:  {Position: position.toString(), IsHit: isHit}});
+
             if (isHit) {
                 beep();
 
@@ -63,6 +72,9 @@ class Battleship {
 
             var computerPos = this.GetRandomPosition();
             var isHit = gameController.CheckIsHit(this.myFleet, computerPos);
+
+            telemetryWorker.postMessage({eventName: 'Computer_ShootPosition', properties:  {Position: computerPos.toString(), IsHit: isHit}});
+
             console.log();
             console.log(`Computer shot in ${computerPos.column}${computerPos.row} and ` + (isHit ? `has hit your ship !` : `miss`));
             if (isHit) {
@@ -111,9 +123,10 @@ class Battleship {
             console.log();
             console.log(`Please enter the positions for the ${ship.name} (size: ${ship.size})`);
             for (var i = 1; i < ship.size + 1; i++) {
-                console.log(`Enter position ${i} of ${ship.size} (i.e A3):`);
-                const position = readline.question();
-                ship.addPosition(Battleship.ParsePosition(position));
+                    console.log(`Enter position ${i} of ${ship.size} (i.e A3):`);
+                    const position = readline.question();
+                    telemetryWorker.postMessage({eventName: 'Player_PlaceShipPosition', properties:  {Position: position, Ship: ship.name, PositionInShip: i}});
+                    ship.addPosition(Battleship.ParsePosition(position));
             }
         })
     }
