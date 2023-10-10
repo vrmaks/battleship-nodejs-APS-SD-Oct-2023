@@ -7,6 +7,22 @@ const position = require("./GameController/position.js");
 const letters = require("./GameController/letters.js");
 let telemetryWorker;
 
+function isPositionCorrect(position) {
+    if (!position.column || !position.row) {
+        return false;
+    }
+
+    if (position.row < 1 || position.row > 8) {
+        return false;
+    }
+
+    if (position.column.value < 1 || position.column.value > 8) {
+        return false;
+    }
+
+    return true;
+}
+
 class Battleship {
     start() {
         telemetryWorker = new Worker("./TelemetryClient/telemetryClient.js");   
@@ -50,7 +66,16 @@ class Battleship {
             console.log();
             console.log("Player, it's your turn");
             console.log("Enter coordinates for your shot :");
+
             var position = Battleship.ParsePosition(readline.question());
+
+            while (!isPositionCorrect(position)) {
+                console.log();
+                console.log("Incorrect input. You couldn't hit outside the field. Try again:");
+
+                position = Battleship.ParsePosition(readline.question());
+            }
+
             var isHit = gameController.CheckIsHit(this.enemyFleet, position);
 
             telemetryWorker.postMessage({eventName: 'Player_ShootPosition', properties:  {Position: position.toString(), IsHit: isHit}});
