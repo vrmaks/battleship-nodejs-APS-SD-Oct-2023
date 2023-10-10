@@ -41,7 +41,7 @@ class Battleship {
 
     StartGame() {
         this.view.clear()
-
+        this.view.showGamePhase()
 
         do {
             console.log();
