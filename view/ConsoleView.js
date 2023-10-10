@@ -1,6 +1,10 @@
 const cliColor = require('cli-color');
 
 class ConsoleView {
+  clear() {
+    console.clear()
+  }
+
   
   showIntro() {
     console.log("Starting...");
@@ -23,8 +27,38 @@ class ConsoleView {
 
     console.log("Game flow:")
     console.log("1. Setup your fleet;")
-    console.log("2. Setup your fleet;")
-    console.log("3. Setup your fleet.")
+    console.log("2. Shoot into enemy;")
+    console.log("3. Win or loose.")
+
+    console.log()
+
+    console.log(cliColor.magenta("Good luck!"))
+    console.log()
+    console.log()
+  }
+
+  showGamePhase() {
+    console.log("                  __");
+    console.log("                 /  \\");
+    console.log("           .-.  |    |");
+    console.log("   *    _.-'  \\  \\__/");
+    console.log("    \\.-'       \\");
+    console.log("   /          _/");
+    console.log("  |      _  /");
+    console.log("  |     /_\\'");
+    console.log("   \\    \\_/");
+    console.log("    \"\"\"\"");
+  }
+
+  showHit() {
+    console.log(cliColor.red("                \\         .  ./"));
+    console.log(cliColor.red("              \\      .:\";'.:..\"   /"));
+    console.log(cliColor.red("                  (M^^.^~~:.'\")."));
+    console.log(cliColor.red("            -   (/  .    . . \\ \\)  -"));
+    console.log(cliColor.red("               ((| :. ~ ^  :. .|))"));
+    console.log(cliColor.red("            -   (\\- |  \\ /  |  /)  -"));
+    console.log(cliColor.red("                 -\\  \\     /  /-"));
+    console.log(cliColor.red("                   \\  \\   /  /"));
   }
 
 }
