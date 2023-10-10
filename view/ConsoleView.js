@@ -1,3 +1,5 @@
+const cliColor = require('cli-color');
+
 class ConsoleView {
   
   showIntro() {
@@ -26,3 +28,5 @@ class ConsoleView {
   }
 
 }
+
+module.exports = ConsoleView

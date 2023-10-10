@@ -5,6 +5,7 @@ const cliColor = require('cli-color');
 const beep = require('beepbeep');
 const position = require("./GameController/position.js");
 const letters = require("./GameController/letters.js");
+const ConsoleView = require('./view/ConsoleView.js')
 let telemetryWorker;
 
 function isPositionCorrect(position) {
@@ -24,26 +25,15 @@ function isPositionCorrect(position) {
 }
 
 class Battleship {
+    view = new ConsoleView()
+
     start() {
         telemetryWorker = new Worker("./TelemetryClient/telemetryClient.js");   
 
         console.log("Starting...");
         telemetryWorker.postMessage({eventName: 'ApplicationStarted', properties:  {Technology: 'Node.js'}});
 
-        console.log(cliColor.magenta("                                     |__"));
-        console.log(cliColor.magenta("                                     |\\/"));
-        console.log(cliColor.magenta("                                     ---"));
-        console.log(cliColor.magenta("                                     / | ["));
-        console.log(cliColor.magenta("                              !      | |||"));
-        console.log(cliColor.magenta("                            _/|     _/|-++'"));
-        console.log(cliColor.magenta("                        +  +--|    |--|--|_ |-"));
-        console.log(cliColor.magenta("                     { /|__|  |/\\__|  |--- |||__/"));
-        console.log(cliColor.magenta("                    +---------------___[}-_===_.'____                 /\\"));
-        console.log(cliColor.magenta("                ____`-' ||___-{]_| _[}-  |     |_[___\\==--            \\/   _"));
-        console.log(cliColor.magenta(" __..._____--==/___]_|__|_____________________________[___\\==--____,------' .7"));
-        console.log(cliColor.magenta("|                        Welcome to Battleship                         BB-61/"));
-        console.log(cliColor.magenta(" \\_________________________________________________________________________|"));
-        console.log();
+        this.view.showIntro()
 
         this.InitializeGame();
         this.StartGame();
@@ -83,14 +73,14 @@ class Battleship {
             if (isHit) {
                 beep();
 
-                console.log("                \\         .  ./");
-                console.log("              \\      .:\";'.:..\"   /");
-                console.log("                  (M^^.^~~:.'\").");
-                console.log("            -   (/  .    . . \\ \\)  -");
-                console.log("               ((| :. ~ ^  :. .|))");
-                console.log("            -   (\\- |  \\ /  |  /)  -");
-                console.log("                 -\\  \\     /  /-");
-                console.log("                   \\  \\   /  /");
+                console.log(cliColor.red("                \\         .  ./"));
+                console.log(cliColor.red("              \\      .:\";'.:..\"   /"));
+                console.log(cliColor.red("                  (M^^.^~~:.'\")."));
+                console.log(cliColor.red("            -   (/  .    . . \\ \\)  -"));
+                console.log(cliColor.red("               ((| :. ~ ^  :. .|))"));
+                console.log(cliColor.red("            -   (\\- |  \\ /  |  /)  -"));
+                console.log(cliColor.red("                 -\\  \\     /  /-"));
+                console.log(cliColor.red("                   \\  \\   /  /"));
             }
 
             console.log(isHit ? "Yeah ! Nice hit !" : "Miss");
