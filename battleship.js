@@ -6,26 +6,15 @@ const beep = require('beepbeep');
 const position = require("./GameController/position.js");
 const letters = require("./GameController/letters.js");
 const ConsoleView = require('./view/ConsoleView.js')
+const isPositionCorrect = require('./GameController/checkPosition.js');
+const FleetInitializer = require('./Fleet/FleetInitializer.js');
 let telemetryWorker;
 
-function isPositionCorrect(position) {
-    if (!position.column || !position.row) {
-        return false;
-    }
 
-    if (position.row < 1 || position.row > 8) {
-        return false;
-    }
-
-    if (position.column.value < 1 || position.column.value > 8) {
-        return false;
-    }
-
-    return true;
-}
 
 class Battleship {
     view = new ConsoleView()
+    fleetInitializer = new FleetInitializer()
 
     start() {
         telemetryWorker = new Worker("./TelemetryClient/telemetryClient.js");   
@@ -127,29 +116,7 @@ class Battleship {
     }
 
     InitializeEnemyFleet() {
-        this.enemyFleet = gameController.InitializeShips();
-
-        this.enemyFleet[0].addPosition(new position(letters.B, 4));
-        this.enemyFleet[0].addPosition(new position(letters.B, 5));
-        this.enemyFleet[0].addPosition(new position(letters.B, 6));
-        this.enemyFleet[0].addPosition(new position(letters.B, 7));
-        this.enemyFleet[0].addPosition(new position(letters.B, 8));
-
-        this.enemyFleet[1].addPosition(new position(letters.E, 6));
-        this.enemyFleet[1].addPosition(new position(letters.E, 7));
-        this.enemyFleet[1].addPosition(new position(letters.E, 8));
-        this.enemyFleet[1].addPosition(new position(letters.E, 9));
-
-        this.enemyFleet[2].addPosition(new position(letters.A, 3));
-        this.enemyFleet[2].addPosition(new position(letters.B, 3));
-        this.enemyFleet[2].addPosition(new position(letters.C, 3));
-
-        this.enemyFleet[3].addPosition(new position(letters.F, 8));
-        this.enemyFleet[3].addPosition(new position(letters.G, 8));
-        this.enemyFleet[3].addPosition(new position(letters.H, 8));
-
-        this.enemyFleet[4].addPosition(new position(letters.C, 5));
-        this.enemyFleet[4].addPosition(new position(letters.C, 6));
+        this.enemyFleet = this.fleetInitializer.getRandomAiFleet();
     }
 }
 
