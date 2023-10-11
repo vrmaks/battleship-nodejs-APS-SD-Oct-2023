@@ -1,5 +1,6 @@
 var colors = require("cli-color");
 const Ship = require("./ship.js");
+const cliColor = require('cli-color');
 const BoardEntryStatus = require('./boardEntryStatus');
 
 
@@ -31,20 +32,23 @@ class Board {
     }
 
     outputBoard(showShips) {
+        console.log('  A B C D E F G H');
 
-        this.entryStatus.forEach(row => {
-            let text = [];
-            row.forEach(cell => {
+        for (let i = 0; i < this.entryStatus.length; i++) {
+            const text = [(i+1).toString()];
+
+            for (let j = 0; j < this.entryStatus[i].length; j++) {
+                const cell = this.entryStatus[j][i];
+
                 switch (cell) {
                     case BoardEntryStatus.unknown: text.push('.'); break;
-                    case BoardEntryStatus.hit: text.push('X'); break;
+                    case BoardEntryStatus.hit: text.push(cliColor.red('X')); break;
                     case BoardEntryStatus.miss: text.push('*'); break;
                 }
-            });
+            }
 
             console.log(text.join(' '));
-        });
-
+        }
     }
 
     getXY(position) {

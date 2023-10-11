@@ -1,6 +1,11 @@
 const GameController = require('./gameController');
 const Ship = require('./ship');
 const BoardEntryStatus = require("./boardEntryStatus");
+const cliColor = require("cli-color");
+const readline = require("readline-sync");
+const Battleship = require("./../battleship.js");
+const letters = require("./letters");
+const position = require("./position");
 
 class GameBoard {
     constructor() {
@@ -49,13 +54,19 @@ class UserFleetSetupController {
         for (var i = 1; i < ship.size + 1; i++) {
                 that.view.showCallToAction(`Enter position ${i} of ${ship.size} (i.e A3):`);
                 const position = readline.question();
-                telemetryWorker.postMessage({eventName: 'Player_PlaceShipPosition', properties:  {Position: position, Ship: ship.name, PositionInShip: i}});
-                ship.addPosition(Battleship.ParsePosition(position));
+                // telemetryWorker.postMessage({eventName: 'Player_PlaceShipPosition', properties:  {Position: position, Ship: ship.name, PositionInShip: i}});
+                ship.addPosition(UserFleetSetupController.ParsePosition(position));
         }
     })
 
     return GameController.InitializeShips()
   }
+
+    static ParsePosition(input) {
+        var letter = letters.get(input.toUpperCase().substring(0, 1));
+        var number = parseInt(input.substring(1, 2), 10);
+        return new position(letter, number);
+    }
 
   /**
    * @param {GameBoard} board

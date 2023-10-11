@@ -16,6 +16,9 @@ const Board = require("./GameController/board.js");
 let telemetryWorker;
 
 class Battleship {
+  constructor() {
+  }
+
   view = new ConsoleView();
   fleetInitializer = new FleetInitializer();
   userFleetSetupController = new UserFleetSetupController(this.view);
