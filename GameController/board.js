@@ -16,7 +16,18 @@ class Board {
 
     constructor(ships, rows = 8, columns = 8) {
         this.ships = ships;
-        this.entryStatus = new Array(rows).fill(new Array(columns).fill(BoardEntryStatus.unknown));
+        // this.entryStatus = new Array(rows).fill();
+
+        this.entryStatus = [
+            new Array(columns).fill(BoardEntryStatus.unknown),
+            new Array(columns).fill(BoardEntryStatus.unknown),
+            new Array(columns).fill(BoardEntryStatus.unknown),
+            new Array(columns).fill(BoardEntryStatus.unknown),
+            new Array(columns).fill(BoardEntryStatus.unknown),
+            new Array(columns).fill(BoardEntryStatus.unknown),
+            new Array(columns).fill(BoardEntryStatus.unknown),
+            new Array(columns).fill(BoardEntryStatus.unknown),
+        ];
     }
 
     outputBoard(showShips) {
