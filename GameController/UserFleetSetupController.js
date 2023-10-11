@@ -24,6 +24,12 @@ class GameBoard {
   }
 
   isOccupied(x, y) {
+    if (
+      x < 0 || 8 <= x || 
+      y < 0 || 8 <= y
+    ) {
+        return true
+    }
     return this.board[x][y];
   }
 
@@ -31,25 +37,25 @@ class GameBoard {
     this.board[x][y] = true;
   }
 
-    outputFleet() {
-        console.log('  A B C D E F G H');
+  outputFleet() {
+      console.log('  A B C D E F G H');
 
-        for (let i = 0; i < this.board.length; i++) {
-            const text = [(i+1).toString()];
+      for (let i = 0; i < this.board.length; i++) {
+          const text = [(i+1).toString()];
 
-            for (let j = 0; j < this.board[i].length; j++) {
-                const cell = this.board[j][i];
+          for (let j = 0; j < this.board[i].length; j++) {
+              const cell = this.board[j][i];
 
-                if (cell) {
-                    text.push('X');
-                } else {
-                    text.push('.');
-                }
-            }
+              if (cell) {
+                  text.push('X');
+              } else {
+                  text.push('.');
+              }
+          }
 
-            console.log(text.join(' '));
-        }
-    }
+          console.log(text.join(' '));
+      }
+  }
 }
 
 const Direction = new Enum({
@@ -66,6 +72,7 @@ class UserFleetSetupController {
    */
   constructor(view) {
     this.view = view;
+    this.board = new GameBoard()
   }
 
   /**
@@ -83,6 +90,7 @@ class UserFleetSetupController {
     );
 
     ships.forEach((ship) => {
+      // this.board.outputFleet()
       this.setupShip(this.board, ship);
     });
 
@@ -113,6 +121,11 @@ class UserFleetSetupController {
 
       const { position, direction } = this.askUserShipPosition();
       this.initializeShipPosition(ship, position, direction);
+      valid = this.validate(board, ship)
+
+      if (valid) {
+        this.forcePlaceShip(board, ship)
+      }
     } while (!valid);
   }
 
@@ -138,6 +151,7 @@ class UserFleetSetupController {
 
     forcePlaceShip(board, ship) {
       for (const position of ship.positions) {
+        console.log(position)
         let {x, y} = this.getXY(position)
         board.occupy(x,y)
       }
@@ -154,10 +168,10 @@ class UserFleetSetupController {
 
     switch (direction) {
       case Direction.L:
-        delta = { x: 1, y: 0 };
+        delta = { x: -1, y: 0 };
         break;
       case Direction.R:
-        delta = { x: -1, y: 0 };
+        delta = { x: 1, y: 0 };
         break;
       case Direction.U:
         delta = { x: 0, y: -1 };
