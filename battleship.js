@@ -9,6 +9,7 @@ const ConsoleView = require('./view/ConsoleView.js')
 const isPositionCorrect = require('./GameController/checkPosition.js');
 const FleetInitializer = require('./Fleet/FleetInitializer.js');
 const BoardEntryStatus = require('./GameController/boardEntryStatus');
+const UserFleetSetupController = require('./GameController/UserFleetSetupController');
 
 const Board = require('./GameController/board.js');
 
@@ -19,6 +20,7 @@ let telemetryWorker;
 class Battleship {
     view = new ConsoleView()
     fleetInitializer = new FleetInitializer()
+    userFleetSetupController = new UserFleetSetupController(this.view)
 
     start() {
         telemetryWorker = new Worker("./TelemetryClient/telemetryClient.js");   
