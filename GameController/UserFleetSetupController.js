@@ -1,8 +1,28 @@
 const GameController = require('./gameController');
 const Ship = require('./ship');
+const BoardEntryStatus = require("./boardEntryStatus");
 
 class GameBoard {
+    constructor() {
+        this.board = [
+            new Array(8).fill(false),
+            new Array(8).fill(false),
+            new Array(8).fill(false),
+            new Array(8).fill(false),
+            new Array(8).fill(false),
+            new Array(8).fill(false),
+            new Array(8).fill(false),
+            new Array(8).fill(false),
+        ];
+    }
 
+    isOccupied(x, y) {
+        return this.board[x][y];
+    }
+
+    occupy(x, y) {
+        this.board[x][y] = true;
+    }
 }
 
 class UserFleetSetupController {
