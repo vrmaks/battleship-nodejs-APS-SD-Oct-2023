@@ -53,10 +53,10 @@ class GameBoard {
 }
 
 const Direction = new Enum({
-  LEFT: "L",
-  RIGHT: "R",
-  DOWN: "D",
-  UP: "U",
+  'L': 1,
+  'R': 2,
+  'D': 3,
+  'U': 4,
 });
 
 class UserFleetSetupController {
@@ -105,7 +105,7 @@ class UserFleetSetupController {
       `Please enter the positions for the ${ship.name} (size: ${ship.size})`
     );
 
-    var valid = true;
+    var valid = false;
     do {
       this.view.showCallToAction(
         `Enter position and direction of ship ${ship.size} (i.e A3 L):`
@@ -113,10 +113,7 @@ class UserFleetSetupController {
 
       const { position, direction } = this.askUserShipPosition();
       this.initializeShipPosition(ship, position, direction);
-    } while (valid);
-
-    // ask input
-    // validate ship, if validation error -> ask again
+    } while (!valid);
   }
 
   getXY(position) {
@@ -149,30 +146,30 @@ class UserFleetSetupController {
   /**
    *
    * @param {Ship} ship
-   * @param {position} position : ;
+   * @param {position} pos
    * @param {Direction} direction
    */
-  initializeShipPosition(ship, position, direction) {
+  initializeShipPosition(ship, pos, direction) {
     let delta;
 
     switch (direction) {
-      case Direction.LEFT:
+      case Direction.L:
         delta = { x: 1, y: 0 };
         break;
-      case Direction.RIGHT:
+      case Direction.R:
         delta = { x: -1, y: 0 };
         break;
-      case Direction.UP:
+      case Direction.U:
         delta = { x: 0, y: -1 };
         break;
-      case Direction.DOWN:
+      case Direction.D:
         delta = { x: 0, y: 1 };
         break;
     }
 
     for (let i = 0; i < ship.size; ++i) {
       ship.addPosition(
-        new position(position.column + i * delta.x, position.row + i * delta.y)
+        new position(pos.column + i * delta.x, pos.row + i * delta.y)
       );
     }
   }
