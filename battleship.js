@@ -40,17 +40,8 @@ class Battleship {
     }
 
     StartGame() {
-        console.clear();
-        console.log("                  __");
-        console.log("                 /  \\");
-        console.log("           .-.  |    |");
-        console.log("   *    _.-'  \\  \\__/");
-        console.log("    \\.-'       \\");
-        console.log("   /          _/");
-        console.log("  |      _  /");
-        console.log("  |     /_\\'");
-        console.log("   \\    \\_/");
-        console.log("    \"\"\"\"");
+        this.view.clear()
+        this.view.showGamePhase()
 
         do {
             console.log();
@@ -71,16 +62,7 @@ class Battleship {
             telemetryWorker.postMessage({eventName: 'Player_ShootPosition', properties:  {Position: position.toString(), IsHit: isHit}});
 
             if (isHit) {
-                beep();
-
-                console.log(cliColor.red("                \\         .  ./"));
-                console.log(cliColor.red("              \\      .:\";'.:..\"   /"));
-                console.log(cliColor.red("                  (M^^.^~~:.'\")."));
-                console.log(cliColor.red("            -   (/  .    . . \\ \\)  -"));
-                console.log(cliColor.red("               ((| :. ~ ^  :. .|))"));
-                console.log(cliColor.red("            -   (\\- |  \\ /  |  /)  -"));
-                console.log(cliColor.red("                 -\\  \\     /  /-"));
-                console.log(cliColor.red("                   \\  \\   /  /"));
+                this.view.showHit();
             }
 
             console.log(isHit ? "Yeah ! Nice hit !" : "Miss");
@@ -93,16 +75,7 @@ class Battleship {
             console.log();
             console.log(`Computer shot in ${computerPos.column}${computerPos.row} and ` + (isHit ? `has hit your ship !` : `miss`));
             if (isHit) {
-                beep();
-
-                console.log("                \\         .  ./");
-                console.log("              \\      .:\";'.:..\"   /");
-                console.log("                  (M^^.^~~:.'\").");
-                console.log("            -   (/  .    . . \\ \\)  -");
-                console.log("               ((| :. ~ ^  :. .|))");
-                console.log("            -   (\\- |  \\ /  |  /)  -");
-                console.log("                 -\\  \\     /  /-");
-                console.log("                   \\  \\   /  /");
+                this.view.showHit()
             }
         }
         while (true);
@@ -131,6 +104,9 @@ class Battleship {
 
     InitializeMyFleet() {
         this.myFleet = gameController.InitializeShips();
+
+        console.log(cliColor.green("~~~~~|| Fleet setup ||~~~~~"));
+        console.log();
 
         console.log("Please position your fleet (Game board size is from A to H and 1 to 8) :");
 
