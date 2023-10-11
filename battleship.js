@@ -8,6 +8,10 @@ const letters = require("./GameController/letters.js");
 const ConsoleView = require('./view/ConsoleView.js')
 const isPositionCorrect = require('./GameController/checkPosition.js');
 const FleetInitializer = require('./Fleet/FleetInitializer.js');
+const BoardEntryStatus = require('./GameController/boardEntryStatus');
+
+const Board = require('./GameController/board.js');
+
 let telemetryWorker;
 
 
@@ -35,6 +39,9 @@ class Battleship {
         do {
             console.log();
             console.log("Player, it's your turn");
+
+            this.enemyBoard.outputBoard(false);
+
             this.view.showCallToAction("Enter coordinates for your shot :");
 
             var position = Battleship.ParsePosition(readline.question());
@@ -46,21 +53,32 @@ class Battleship {
                 position = Battleship.ParsePosition(readline.question());
             }
 
-            var isHit = gameController.CheckIsHit(this.enemyFleet, position);
+            // var isHit = gameController.CheckIsHit(this.enemyBoard.ships, position);
+            let { oldStatus, newStatus } = this.enemyBoard.hit(position);
 
             telemetryWorker.postMessage({eventName: 'Player_ShootPosition', properties:  {Position: position.toString(), IsHit: isHit}});
 
-            if (isHit) {
-                this.view.showHit();
-            }
-            if (isHit) {
-                this.view.showSuccessMessage("Yeah ! Nice hit !");
+
+            if (oldStatus !== newStatus) {
+                const isHit = newStatus === BoardEntryStatus.hit;
+
+                if (isHit) {
+                    this.view.showHit();
+                }
+
+                if (isHit) {
+                    this.view.showSuccessMessage("Yeah ! Nice hit !");
+                } else {
+                    this.view.showMissMessage("Miss");
+                }
             } else {
-                this.view.showMissMessage("Miss");
+                this.view.showInfoMessage('Duplicate');
             }
 
+
+
             var computerPos = this.GetRandomPosition();
-            var isHit = gameController.CheckIsHit(this.myFleet, computerPos);
+            var isHit = gameController.CheckIsHit(this.myBoard.ships, computerPos);
 
             telemetryWorker.postMessage({eventName: 'Computer_ShootPosition', properties:  {Position: computerPos.toString(), IsHit: isHit}});
 
@@ -95,7 +113,12 @@ class Battleship {
     }
 
     InitializeMyFleet() {
-        this.myFleet = gameController.InitializeShips();
+        this.myBoard = new Board(
+            gameController.InitializeShips(),
+            8,
+            8
+        );
+
 
         console.log(cliColor.green("~~~~~|| Fleet setup ||~~~~~"));
         console.log();
@@ -103,7 +126,7 @@ class Battleship {
         console.log("Please position your fleet (Game board size is from A to H and 1 to 8) :");
 
         var that = this;
-        this.myFleet.forEach(function (ship) {
+        this.myBoard.ships.forEach(function (ship) {
             console.log();
             that.view.showInfoMessage(`Please enter the positions for the ${ship.name} (size: ${ship.size})`);
             for (var i = 1; i < ship.size + 1; i++) {
@@ -116,7 +139,31 @@ class Battleship {
     }
 
     InitializeEnemyFleet() {
-        this.enemyFleet = this.fleetInitializer.getRandomAiFleet();
+        // const ships = gameController.InitializeShips();
+        //
+        // ships[0].addPosition(new position(letters.B, 4));
+        // ships[0].addPosition(new position(letters.B, 5));
+        // ships[0].addPosition(new position(letters.B, 6));
+        // ships[0].addPosition(new position(letters.B, 7));
+        // ships[0].addPosition(new position(letters.B, 8));
+        //
+        // ships[1].addPosition(new position(letters.E, 6));
+        // ships[1].addPosition(new position(letters.E, 7));
+        // ships[1].addPosition(new position(letters.E, 8));
+        // ships[1].addPosition(new position(letters.E, 9));
+        //
+        // ships[2].addPosition(new position(letters.A, 3));
+        // ships[2].addPosition(new position(letters.B, 3));
+        // ships[2].addPosition(new position(letters.C, 3));
+        //
+        // ships[3].addPosition(new position(letters.F, 8));
+        // ships[3].addPosition(new position(letters.G, 8));
+        // ships[3].addPosition(new position(letters.H, 8));
+        //
+        // ships[4].addPosition(new position(letters.C, 5));
+        // ships[4].addPosition(new position(letters.C, 6));
+
+        this.enemyBoard = new Board(this.fleetInitializer.getRandomAiFleet(), 8, 8);
     }
 }
 
