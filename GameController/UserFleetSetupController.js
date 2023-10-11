@@ -1,33 +1,35 @@
-const GameController = require('./gameController');
-const Ship = require('./ship');
+require("enum").register();
+const GameController = require("./gameController");
+const Ship = require("./ship");
 const BoardEntryStatus = require("./boardEntryStatus");
 const cliColor = require("cli-color");
-const readline = require("readline-sync");
 const Battleship = require("./../battleship.js");
 const letters = require("./letters");
 const position = require("./position");
+const ConsoleView = require("../view/ConsoleView");
+const readline = require("readline-sync");
 
 class GameBoard {
-    constructor() {
-        this.board = [
-            new Array(8).fill(false),
-            new Array(8).fill(false),
-            new Array(8).fill(false),
-            new Array(8).fill(false),
-            new Array(8).fill(false),
-            new Array(8).fill(false),
-            new Array(8).fill(false),
-            new Array(8).fill(false),
-        ];
-    }
+  constructor() {
+    this.board = [
+      new Array(8).fill(false),
+      new Array(8).fill(false),
+      new Array(8).fill(false),
+      new Array(8).fill(false),
+      new Array(8).fill(false),
+      new Array(8).fill(false),
+      new Array(8).fill(false),
+      new Array(8).fill(false),
+    ];
+  }
 
-    isOccupied(x, y) {
-        return this.board[x][y];
-    }
+  isOccupied(x, y) {
+    return this.board[x][y];
+  }
 
-    occupy(x, y) {
-        this.board[x][y] = true;
-    }
+  occupy(x, y) {
+    this.board[x][y] = true;
+  }
 
     outputFleet() {
         console.log('  A B C D E F G H');
@@ -50,9 +52,20 @@ class GameBoard {
     }
 }
 
+const Direction = new Enum({
+  LEFT: "L",
+  RIGHT: "R",
+  DOWN: "D",
+  UP: "U",
+});
+
 class UserFleetSetupController {
+  /**
+   *
+   * @param {ConsoleView} view
+   */
   constructor(view) {
-    this.view = view
+    this.view = view;
   }
 
   /**
@@ -65,21 +78,15 @@ class UserFleetSetupController {
     console.log(cliColor.green("~~~~~|| Fleet setup ||~~~~~"));
     console.log();
 
-    console.log("Please position your fleet (Game board size is from A to H and 1 to 8) :");
+    console.log(
+      "Please position your fleet (Game board size is from A to H and 1 to 8) :"
+    );
 
-    const that = this
-    ships.forEach(function (ship) {
-        console.log();
-        that.view.showInfoMessage(`Please enter the positions for the ${ship.name} (size: ${ship.size})`);
-        for (var i = 1; i < ship.size + 1; i++) {
-                that.view.showCallToAction(`Enter position ${i} of ${ship.size} (i.e A3):`);
-                const position = readline.question();
-                // telemetryWorker.postMessage({eventName: 'Player_PlaceShipPosition', properties:  {Position: position, Ship: ship.name, PositionInShip: i}});
-                ship.addPosition(UserFleetSetupController.ParsePosition(position));
-        }
-    })
+    ships.forEach((ship) => {
+      this.setupShip(this.board, ship);
+    });
 
-    return GameController.InitializeShips()
+    return ships
   }
 
     static ParsePosition(input) {
@@ -92,7 +99,22 @@ class UserFleetSetupController {
    * @param {GameBoard} board
    * @param {Ship} ship
    */
-  setupShip(ship) {
+  setupShip(board, ship) {
+    console.log();
+    this.view.showInfoMessage(
+      `Please enter the positions for the ${ship.name} (size: ${ship.size})`
+    );
+
+    var valid = true;
+    do {
+      this.view.showCallToAction(
+        `Enter position and direction of ship ${ship.size} (i.e A3 L):`
+      );
+
+      const { position, direction } = this.askUserShipPosition();
+      this.initializeShipPosition(ship, position, direction);
+    } while (valid);
+
     // ask input
     // validate ship, if validation error -> ask again
   }
@@ -125,4 +147,52 @@ class UserFleetSetupController {
     }
 }
 
-module.exports = UserFleetSetupController
+  /**
+   *
+   * @param {Ship} ship
+   * @param {position} position : ;
+   * @param {Direction} direction
+   */
+  initializeShipPosition(ship, position, direction) {
+    let delta;
+
+    switch (direction) {
+      case Direction.LEFT:
+        delta = { x: 1, y: 0 };
+        break;
+      case Direction.RIGHT:
+        delta = { x: -1, y: 0 };
+        break;
+      case Direction.UP:
+        delta = { x: 0, y: -1 };
+        break;
+      case Direction.DOWN:
+        delta = { x: 0, y: 1 };
+        break;
+    }
+
+    for (let i = 0; i < ship.size; ++i) {
+      ship.addPosition(
+        new position(position.column + i * delta.x, position.row + i * delta.y)
+      );
+    }
+  }
+
+  /**
+   *
+   * @returns {{
+   *  position: position
+   *  direction: Direction
+   * }}
+   */
+  askUserShipPosition() {
+    const [position, direction] = readline.question().split(" ");
+
+    return {
+      position: UserFleetSetupController.ParsePosition(position),
+      direction: Direction[direction],
+    };
+  }
+}
+
+module.exports = UserFleetSetupController;

@@ -1,8 +1,6 @@
 const { Worker, isMainThread } = require("worker_threads");
 const readline = require("readline-sync");
 const gameController = require("./GameController/gameController.js");
-const cliColor = require("cli-color");
-const beep = require("beepbeep");
 const position = require("./GameController/position.js");
 const letters = require("./GameController/letters.js");
 const ConsoleView = require("./view/ConsoleView.js");
