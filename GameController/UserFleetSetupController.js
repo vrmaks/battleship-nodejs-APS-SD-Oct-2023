@@ -90,7 +90,7 @@ class UserFleetSetupController {
     );
 
     ships.forEach((ship) => {
-      // this.board.outputFleet()
+      this.board.outputFleet()
       this.setupShip(this.board, ship);
     });
 
@@ -125,13 +125,15 @@ class UserFleetSetupController {
 
       if (valid) {
         this.forcePlaceShip(board, ship)
+      } else {
+        console.log("Invalid ship position")
       }
     } while (!valid);
   }
 
   getXY(position) {
-    let x = position.row - 1;
-    let y = position.column.value - 1;
+    let x = position.column - 1;
+    let y = position.row - 1;
 
     return {x, y};
   }
@@ -151,7 +153,6 @@ class UserFleetSetupController {
 
     forcePlaceShip(board, ship) {
       for (const position of ship.positions) {
-        console.log(position)
         let {x, y} = this.getXY(position)
         board.occupy(x,y)
       }
