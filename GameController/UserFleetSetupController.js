@@ -145,7 +145,6 @@ class UserFleetSetupController {
         board.occupy(x,y)
       }
     }
-}
 
   /**
    *
