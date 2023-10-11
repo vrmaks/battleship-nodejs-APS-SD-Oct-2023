@@ -6,7 +6,9 @@
   "scripts": {
     "mocha": "mocha ./**/*Tests.js",
     "cucumber": "./node_modules/.bin/cucumber-js ./GameController_ATDD",
-    "test": "npm run mocha && npm run cucumber"
+    "test": "npm run mocha && npm run cucumber",
+    "build-mac": "pkg . --target node18-macos-arm64",
+    "build-win": "pkg . --target node14-win-arm64"
   },
   "author": "",
   "license": "ISC",
@@ -40,5 +42,6 @@
     "@cucumber/cucumber": "^7.3.2",
     "cucumber-junit": "^1.7.1",
     "mocha-junit-reporter": "^2.0.2"
-  }
+  },
+  "bin": "index.js"
 }
