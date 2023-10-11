@@ -28,6 +28,26 @@ class GameBoard {
     occupy(x, y) {
         this.board[x][y] = true;
     }
+
+    outputFleet() {
+        console.log('  A B C D E F G H');
+
+        for (let i = 0; i < this.board.length; i++) {
+            const text = [(i+1).toString()];
+
+            for (let j = 0; j < this.board[i].length; j++) {
+                const cell = this.board[j][i];
+
+                if (cell) {
+                    text.push('X');
+                } else {
+                    text.push('.');
+                }
+            }
+
+            console.log(text.join(' '));
+        }
+    }
 }
 
 class UserFleetSetupController {
