@@ -96,6 +96,33 @@ class UserFleetSetupController {
     // ask input
     // validate ship, if validation error -> ask again
   }
+
+  getXY(position) {
+    let x = position.row - 1;
+    let y = position.column.value - 1;
+
+    return {x, y};
+  }
+    /**
+   * @param {GameBoard} board
+   * @param {Ship} ship
+   */
+    validate(board, ship) {
+      for (const position of ship.positions) {
+        let {x, y} = this.getXY(position)
+        if (board.isOccupied(x,y)) {
+          return false
+        }
+      }
+      return true
+    }
+
+    forcePlaceShip(board, ship) {
+      for (const position of ship.positions) {
+        let {x, y} = this.getXY(position)
+        board.occupy(x,y)
+      }
+    }
 }
 
 module.exports = UserFleetSetupController
