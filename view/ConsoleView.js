@@ -61,6 +61,26 @@ class ConsoleView {
     console.log(cliColor.red("                   \\  \\   /  /"));
   }
 
+  showInfoMessage(text) {
+    console.log(text)
+  }
+
+  showCallToAction(text) {
+    console.log(cliColor.yellow(text));
+  }
+
+  showSuccessMessage(text) {
+    console.log(cliColor.green(text));
+  }
+
+  showMissMessage(text) {
+    console.log(cliColor.blue(text));
+  }
+  
+  showFailureMessage(text) {
+    console.log(cliColor.red(text));
+  }
+
 }
 
 module.exports = ConsoleView

@@ -46,13 +46,13 @@ class Battleship {
         do {
             console.log();
             console.log("Player, it's your turn");
-            console.log("Enter coordinates for your shot :");
+            this.view.showCallToAction("Enter coordinates for your shot :");
 
             var position = Battleship.ParsePosition(readline.question());
 
             while (!isPositionCorrect(position)) {
                 console.log();
-                console.log("Incorrect input. You couldn't hit outside the field. Try again:");
+                this.view.showCallToAction("Incorrect input. You couldn't hit outside the field. Try again:");
 
                 position = Battleship.ParsePosition(readline.question());
             }
@@ -64,8 +64,11 @@ class Battleship {
             if (isHit) {
                 this.view.showHit();
             }
-
-            console.log(isHit ? "Yeah ! Nice hit !" : "Miss");
+            if (isHit) {
+                this.view.showSuccessMessage("Yeah ! Nice hit !");
+            } else {
+                this.view.showMissMessage("Miss");
+            }
 
             var computerPos = this.GetRandomPosition();
             var isHit = gameController.CheckIsHit(this.myFleet, computerPos);
@@ -110,11 +113,12 @@ class Battleship {
 
         console.log("Please position your fleet (Game board size is from A to H and 1 to 8) :");
 
+        var that = this;
         this.myFleet.forEach(function (ship) {
             console.log();
-            console.log(`Please enter the positions for the ${ship.name} (size: ${ship.size})`);
+            that.view.showInfoMessage(`Please enter the positions for the ${ship.name} (size: ${ship.size})`);
             for (var i = 1; i < ship.size + 1; i++) {
-                    console.log(`Enter position ${i} of ${ship.size} (i.e A3):`);
+                    that.view.showCallToAction(`Enter position ${i} of ${ship.size} (i.e A3):`);
                     const position = readline.question();
                     telemetryWorker.postMessage({eventName: 'Player_PlaceShipPosition', properties:  {Position: position, Ship: ship.name, PositionInShip: i}});
                     ship.addPosition(Battleship.ParsePosition(position));
